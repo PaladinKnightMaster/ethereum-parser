@@ -55,22 +55,6 @@ The application can be configured using environment variables:
     go run cmd/main.go
     ```
 
-## Docker
-
-You can build and run the application using Docker:
-
-1. Build the Docker image:
-
-    ```sh
-    docker build -t ethereum-parser .
-    ```
-
-2. Run the Docker container:
-
-    ```sh
-    docker run -p 8080:8080 ethereum-parser
-    ```
-
 ## API Endpoints
 
 - `GET /current_block`: Get the current block number.
