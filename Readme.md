@@ -27,7 +27,6 @@ ethereum-parser/
 |-- shared/
 |   |-- types.go
 |   |-- utils.go
-|-- dockerfile
 |-- Readme.md
 |-- go.mod
 |-- go.sum
@@ -45,7 +44,7 @@ The application can be configured using environment variables:
 1. Clone the repository:
 
     ```sh
-    git clone https://github.com/your-username/ethereum-parser.git
+    git clone https://github.com/PaladinKnightMaster/ethereum-parser.git
     cd ethereum-parser
     ```
 
