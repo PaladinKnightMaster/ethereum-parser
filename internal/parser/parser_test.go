@@ -5,6 +5,7 @@ import (
 	"testing"
 )
 
+// TestGetCurrentBlock verifies that the current block number is retrieved correctly
 func TestGetCurrentBlock(t *testing.T) {
 	cfg := shared.Config{RPCURL: "https://cloudflare-eth.com"}
 	parser := NewParser(cfg)
@@ -15,6 +16,7 @@ func TestGetCurrentBlock(t *testing.T) {
 	}
 }
 
+// TestSubscribe verifies that addresses can be subscribed correctly
 func TestSubscribe(t *testing.T) {
 	cfg := shared.Config{RPCURL: "https://cloudflare-eth.com"}
 	parser := NewParser(cfg)
@@ -33,6 +35,7 @@ func TestSubscribe(t *testing.T) {
 	}
 }
 
+// TestGetTransactions verifies that transactions for a subscribed address are retrieved correctly
 func TestGetTransactions(t *testing.T) {
 	cfg := shared.Config{RPCURL: "https://cloudflare-eth.com"}
 	parser := NewParser(cfg)
@@ -60,6 +63,7 @@ func TestGetTransactions(t *testing.T) {
 	}
 }
 
+// TestFetchCurrentBlock verifies that the current block number is fetched correctly from the Ethereum JSON-RPC endpoint
 func TestFetchCurrentBlock(t *testing.T) {
 	cfg := shared.Config{RPCURL: "https://cloudflare-eth.com"}
 	parser := NewParser(cfg)

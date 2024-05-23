@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-// Function to convert currentBlock to hexadecimal
+// CurrentBlockToHex converts a block number to its hexadecimal representation
 func CurrentBlockToHex(currentBlock int64) string {
 	hexString := fmt.Sprintf("0x%x", currentBlock)
 	return hexString

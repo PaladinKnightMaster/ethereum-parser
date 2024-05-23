@@ -12,11 +12,12 @@ import (
 	"time"
 )
 
-// Redeclared in this file
+// Redeclare shared types
 type Transaction = shared.Transaction
 type JSONRPCRequest = shared.JSONRPCRequest
 type Block = shared.Block
 
+// Parser struct defines the parser state and configuration
 type Parser struct {
 	currentBlock int64
 	subscribed   map[string][]Transaction
@@ -27,6 +28,7 @@ type Parser struct {
 	processedTransactions map[string]map[string]struct{}
 }
 
+// NewParser creates a new Parser instance and starts the block scanning routine
 func NewParser(cfg shared.Config) *Parser {
 	p := &Parser{
 		currentBlock: 0,
@@ -38,16 +40,18 @@ func NewParser(cfg shared.Config) *Parser {
 		processedTransactions: make(map[string]map[string]struct{}),
 	}
 
+	// Start block scanning in a separate goroutine
 	go p.scanBlocks()
 
 	return p
 }
 
+// GetCurrentBlock returns the current block number in hexadecimal format
 func (p *Parser) GetCurrentBlock() string {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
-	// Call fetchCurrentBlock() to set the initial currentBlock value
+	// Fetch the latest block number
 	blockNum, err := p.fetchCurrentBlock()
 	if err != nil {
 		log.Println("Error fetching current block:", err)
@@ -58,6 +62,7 @@ func (p *Parser) GetCurrentBlock() string {
 	return shared.CurrentBlockToHex(p.currentBlock)
 }
 
+// Subscribe adds an address to the list of subscribed addresses for transaction notifications
 func (p *Parser) Subscribe(address string) bool {
 	p.mu.Lock()
 	defer p.mu.Unlock()
@@ -69,6 +74,7 @@ func (p *Parser) Subscribe(address string) bool {
 	return false
 }
 
+// GetTransactions returns the list of transactions for a given subscribed address
 func (p *Parser) GetTransactions(address string) []Transaction {
 	p.mu.RLock()
 	defer p.mu.RUnlock()
@@ -76,6 +82,7 @@ func (p *Parser) GetTransactions(address string) []Transaction {
 	return p.subscribed[address]
 }
 
+// fetchCurrentBlock retrieves the latest block number from the Ethereum JSON-RPC endpoint
 func (p *Parser) fetchCurrentBlock() (int64, error) {
 
 	type Response struct {
@@ -108,13 +115,14 @@ func (p *Parser) fetchCurrentBlock() (int64, error) {
 	return blockNumber, nil
 }
 
+// scanBlocks continuously fetches and processes new blocks for transactions
 func (p *Parser) scanBlocks() {
 	for {
 		p.mu.Lock()
 		startBlock := p.currentBlock
 		p.mu.Unlock()
 
-		// Call fetchCurrentBlock() to set the initial currentBlock value
+		// Fetch the latest block number
 		lastBlockNumber, err := p.fetchCurrentBlock()
 		if err != nil {
 			log.Println("Error fetching current block:", err)
@@ -124,6 +132,7 @@ func (p *Parser) scanBlocks() {
 			continue
 		}
 
+		// Process each block from the current to the latest block
 		for i := startBlock; i <= lastBlockNumber; i++ {
 			blockTransactions, err := p.getBlockTransactions(i)
 			if err != nil {
@@ -132,7 +141,7 @@ func (p *Parser) scanBlocks() {
 			p.mu.Lock()
 			for _, tx := range blockTransactions {
 				txKey := tx.BlockNumber + "_" + tx.TransactionIndex
-				// If the transaction sender address is subscribed, and the transaction has not been processed
+				// Add the transaction to the sender's subscription if not already processed
 				if _, exists := p.subscribed[tx.From]; exists {
 					if _, exists := p.processedTransactions[tx.From][txKey]; !exists {
 						// Append the new transaction to subscribed address for notification
@@ -144,7 +153,7 @@ func (p *Parser) scanBlocks() {
 						p.processedTransactions[tx.From][txKey] = struct{}{}
 					}
 				}
-				// If the transaction receiver address is subscribed, and the transaction index is greater than the latest processed transaction index
+				// Add the transaction to the receiver's subscription if not already processed
 				if _, exists := p.subscribed[tx.To]; exists {
 					if _, exists := p.processedTransactions[tx.To][txKey]; !exists {
 						// Append the new transaction to subscribed address for notification
@@ -159,13 +168,13 @@ func (p *Parser) scanBlocks() {
 			}
 			p.mu.Unlock()
 		}
+		// Sleep before the next block scan
 		time.Sleep(10 * time.Second)
 	}
 }
 
+// getBlockTransactions fetches the transactions for a given block number
 func (p *Parser) getBlockTransactions(blockNumber int64) ([]Transaction, error) {
-	// Implement the logic to fetch transactions for a given block number
-	// and return a slice of Transaction structs
 	type Response struct {
 		Result json.RawMessage `json:"result"`
 	}

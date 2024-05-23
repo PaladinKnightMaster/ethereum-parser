@@ -1,12 +1,12 @@
 package shared
 
-// Config dependencies
+// Config defines the configuration parameters for the parser
 type Config struct {
 	ServerPort string
 	RPCURL     string
 }
 
-// Parser dependencies
+// JSONRPCRequest represents a JSON-RPC request payload
 type JSONRPCRequest struct {
 	JSONRPC string        `json:"jsonrpc"`
 	Method  string        `json:"method"`
@@ -14,11 +14,13 @@ type JSONRPCRequest struct {
 	ID      int           `json:"id"`
 }
 
+// Block represents an Ethereum block with its transactions
 type Block struct {
 	Number       string        `json:"number"`
 	Transactions []Transaction `json:"transactions"`
 }
 
+// Transaction represents an Ethereum transaction
 type Transaction struct {
 	Hash             string `json:"hash"`
 	From             string `json:"from"`
