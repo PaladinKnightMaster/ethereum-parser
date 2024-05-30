@@ -54,7 +54,7 @@ func (p *Parser) GetCurrentBlock() string {
 	// Fetch the latest block number
 	blockNum, err := p.fetchCurrentBlock()
 	if err != nil {
-		log.Println("Error fetching current block:", err)
+		log.Println("Error fetching current block at GetCurrentBlock():", err)
 	}
 
 	p.currentBlock = blockNum
@@ -125,7 +125,7 @@ func (p *Parser) scanBlocks() {
 		// Fetch the latest block number
 		lastBlockNumber, err := p.fetchCurrentBlock()
 		if err != nil {
-			log.Println("Error fetching current block:", err)
+			log.Println("Error fetching current block at scanBlocks(): ", err)
 		}
 
 		if startBlock == 0 {
